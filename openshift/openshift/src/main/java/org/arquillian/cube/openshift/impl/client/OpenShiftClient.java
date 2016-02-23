@@ -37,12 +37,14 @@ public class OpenShiftClient {
     private KubernetesClient kubernetes;
     private GitServer gitserver;
     private boolean keepAliveGitServer;
+	private String routeSuffix;
 
-    public OpenShiftClient(OpenShiftConfig config, String namespace, boolean keepAliveGitServer) {
+    public OpenShiftClient(OpenShiftConfig config, String namespace, String routeSuffix, boolean keepAliveGitServer) {
         this.kubernetes = new DefaultKubernetesClient(config);
         this.namespace = namespace;
+		this.routeSuffix = routeSuffix;
         this.keepAliveGitServer = keepAliveGitServer;
-        this.gitserver = new GitServer(this.getClient(), namespace);
+        this.gitserver = new GitServer(this.getClientExt(), namespace, routeSuffix);
     }
 
     public List<Exception> clean(ResourceHolder holder) {

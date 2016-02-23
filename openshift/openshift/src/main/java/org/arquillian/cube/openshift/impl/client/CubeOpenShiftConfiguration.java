@@ -20,6 +20,7 @@ public class CubeOpenShiftConfiguration {
     private static final String DEFINITIONS = "definitions";
     private static final String AUTO_START_CONTAINERS = "autoStartContainers";
     private static final String PROXIED_COTNAINER_PORTS = "proxiedContainerPorts";
+	private static final String ROUTE_SUFFIX = "routeSuffix";
 
     private String originServer;
     private String namespace;
@@ -28,6 +29,7 @@ public class CubeOpenShiftConfiguration {
     private String definitionsFile;
     private String[] autoStartContainers;
     private Set<String> proxiedContainerPorts;
+	private String routeSuffix;
 
     public String getOriginServer() {
         return originServer;
@@ -55,6 +57,10 @@ public class CubeOpenShiftConfiguration {
         return proxiedContainerPorts;
     }
 
+	public String getRouteSuffix() {
+		return routeSuffix;
+	}
+
     public static CubeOpenShiftConfiguration fromMap(Map<String, String> config) {
 
         CubeOpenShiftConfiguration conf = new CubeOpenShiftConfiguration();
@@ -80,6 +86,9 @@ public class CubeOpenShiftConfiguration {
         if (config.containsKey(PROXIED_COTNAINER_PORTS)) {
             conf.proxiedContainerPorts = new HashSet<String>(Arrays.asList(config.get(PROXIED_COTNAINER_PORTS).split(",")));
         }
+		if (config.containsKey(ROUTE_SUFFIX)) {
+			conf.routeSuffix = config.get(ROUTE_SUFFIX);
+		}
         return conf;
     }
 

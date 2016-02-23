@@ -7,10 +7,7 @@ import io.fabric8.kubernetes.api.model.PodCondition;
 import io.fabric8.kubernetes.api.model.PodStatus;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServicePort;
-import io.fabric8.kubernetes.client.KubernetesClient;
-import io.fabric8.kubernetes.client.KubernetesClientException;
-import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
+import io.fabric8.kubernetes.client.*;
 import io.fabric8.openshift.api.model.Build;
 
 import java.util.concurrent.CountDownLatch;
@@ -20,7 +17,7 @@ import org.arquillian.cube.spi.Binding;
 
 public final class ResourceUtil {
 
-    public static Pod waitForStart(KubernetesClient kubernetes, Pod resource) throws Exception {
+    public static Pod waitForStart(GenericKubernetesClient kubernetes, Pod resource) throws Exception {
         final AtomicReference<Pod> holder = new AtomicReference<Pod>();
         final CountDownLatch latch = new CountDownLatch(1);
         final Watcher<Pod> watcher = new Watcher<Pod>() {
@@ -48,8 +45,14 @@ public final class ResourceUtil {
             
         };
 
+		Pod pod = kubernetes.pods().inNamespace(resource.getMetadata().getNamespace()).withName(resource.getMetadata().getName()).get();
+		if (pod.getStatus() != null && isRunning(pod.getStatus().getPhase()) && isReady(pod.getStatus())) {
+			return pod;
+		}
+
         System.out.print("waiting for pod " + resource.getMetadata().getName() + " ");
         Watch watch = kubernetes.pods().inNamespace(resource.getMetadata().getNamespace()).withName(resource.getMetadata().getName()).watch(watcher);
+
         //TODO: use timeout
         latch.await();
         watch.close();

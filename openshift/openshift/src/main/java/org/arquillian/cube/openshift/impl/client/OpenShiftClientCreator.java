@@ -25,7 +25,7 @@ public class OpenShiftClientCreator {
         if (config.getNoProxy() == null) {
             config.setNoProxy(new String[0]);
         }
-        openShiftClientProducer.set(createClient(OpenShiftConfig.wrap(config), cubeConfiguration.getNamespace(),
+        openShiftClientProducer.set(createClient(OpenShiftConfig.wrap(config), cubeConfiguration.getNamespace(), cubeConfiguration.getRouteSuffix(),
                 cubeConfiguration.shouldKeepAliveGitServer()));
     }
 
@@ -33,7 +33,7 @@ public class OpenShiftClientCreator {
         client.shutdown();
     }
 
-    public OpenShiftClient createClient(OpenShiftConfig openShiftConfig, String namespace, boolean keepAliveGitServer) {
-        return new OpenShiftClient(openShiftConfig, namespace, keepAliveGitServer);
+    public OpenShiftClient createClient(OpenShiftConfig openShiftConfig, String namespace, String routeSuffix, boolean keepAliveGitServer) {
+        return new OpenShiftClient(openShiftConfig, namespace, routeSuffix, keepAliveGitServer);
     }
 }
